@@ -10,7 +10,7 @@ import 'tachyons';
 const particlesOptions = {
   particles: {
 		number: {
-			value: 100,
+			value: 90,
 			density: {
 				enable: true,
 				value_area: 500
@@ -23,6 +23,18 @@ const particlesOptions = {
 			onhover: {
 				enable: true,
 				mode: 'repulse'	
+			},
+			onclick: {
+				enable: true,
+				mode: 'push'
+			}
+		},
+		modes: {
+			repulse: {
+				distance: 180
+			},
+			push: {
+				particles_nb: 10
 			}
 		}
 	}
