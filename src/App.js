@@ -17,31 +17,18 @@ const particlesOptions = {
   particles: {
 		number: {
 			value: 90,
-			density: {
-				enable: true,
-				value_area: 500
-			}
+			density: {enable: true, value_area: 500}
 		}
 	},
 	interactivity: {
 		detect_on: 'window',
 		events: {
-			onhover: {
-				enable: true,
-				mode: 'repulse'	
-			},
-			onclick: {
-				enable: true,
-				mode: 'push'
-			}
+			onhover: { enable: true, mode: 'repulse'},
+			onclick: { enable: true, mode: 'push'}
 		},
 		modes: {
-			repulse: {
-				distance: 180
-			},
-			push: {
-				particles_nb: 10
-			}
+			repulse: {distance: 180},
+			push: {particles_nb: 10}
 		}
 	}
 }
@@ -51,8 +38,27 @@ class App extends Component {
 		super();
 		this.state = {
 			input: '',
-			imageUrl: ''
+			imageUrl: '',
+			box: {},
 		}
+	}
+
+	calculateFaceLocation = (data) => {
+		const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
+		const image = document.getElementById('inputImage');
+		const width = Number(image.width);
+		const height = Number(image.height);
+		return {
+			leftCol: clarifaiFace.left_col * width,
+			topRow: clarifaiFace.top_row * height,
+			rightCol: (1 - clarifaiFace.right_col) * width,
+			bottomRow: (1 - clarifaiFace.bottom_row) * height
+		}
+	}
+
+	displayFaceBox = (box) => {
+		console.log(box);
+		this.setState({box});
 	}
 
 	onInputChange = (event) => {
@@ -65,14 +71,8 @@ class App extends Component {
 		.predict(
 			Clarifai.FACE_DETECT_MODEL, 
 			this.state.input
-		).then(
-	    function(response) {
-	      console.log(response.outputs[0].data.regions[0].region_info.bounding_box);
-	    },
-	    function(err) {
-	      console.log(err);
-	    }
-	  );
+		).then(response => this.displayFaceBox(this.calculateFaceLocation(response))
+	  ).catch(err => console.log(err));
 	}
 
 	render() {
@@ -80,7 +80,7 @@ class App extends Component {
 	    <div className="App">
 	    	<Particles className='particles'
 	    		params={particlesOptions} 
-	    	/>
+	    	/>   
 	      <Navigation />
 	      <Logo />
 	      <Rank /> 
@@ -88,7 +88,7 @@ class App extends Component {
 	      	onInputChange={this.onInputChange} 
 	      	onButtonSubmit={this.onButtonSubmit}
 	      />
-	      <FaceRecognition imageUrl={this.state.imageUrl}/>
+	      <FaceRecognition box={this.state.box} imageUrl={this.state.imageUrl}/>
 	    </div>
 	  );
 	}
