@@ -1,8 +1,8 @@
 import React from 'react';
-function Navigation() {
+function Navigation({onRouteChange}) {
 	return(
 		<nav style={{display: 'flex', justifyContent: 'flex-end'}}>
-			<p className='f3 dim black pa3 pointer link'>Sign Out</p>
+			<p className='f3 dim black pa3 pointer link' onClick={() => onRouteChange('signin')}>Sign Out</p>
 		</nav>
 	);
 }
